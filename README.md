@@ -110,3 +110,4 @@ Asset model 3D yang digunakan dalam proyek ini bersumber dari para desainer berb
 ## 📄 Lisensi
 
 Proyek ini dirilis untuk tujuan portofolio dan edukasi simulasi Three.js. Hak cipta model 3D masing-masing tetap menjadi milik kreator aslinya di CGTrader sebagaimana dicantumkan pada bagian Kredit di atas.
+
