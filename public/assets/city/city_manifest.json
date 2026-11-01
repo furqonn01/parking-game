@@ -1,0 +1,27 @@
+{
+  "type": "lod_city",
+  "name": "Metropolitan Downtown",
+  "center": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "chunks": [
+    {
+      "id": "inner_downtown",
+      "name": "Downtown District (<900m)",
+      "file": "assets/city/city_inner.glb",
+      "sizeMB": "14.57",
+      "tier": "core",
+      "loadDistance": 1200
+    },
+    {
+      "id": "outer_skyline",
+      "name": "Metropolis Skyline (900-2600m)",
+      "file": "assets/city/city_outer.glb",
+      "sizeMB": "23.82",
+      "tier": "extended",
+      "loadDistance": 2800
+    }
+  ]
+}

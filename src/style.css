@@ -1,0 +1,884 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0d0f14;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #ffffff;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* UI Overlay Container */
+#game-ui-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#game-ui-overlay button,
+#game-ui-overlay .modal-card {
+  pointer-events: auto;
+}
+
+/* Top Action Bar */
+.ui-topbar {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-left, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge-brand {
+  background: rgba(18, 22, 34, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #00ffcc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.badge-tag {
+  background: rgba(20, 24, 38, 0.75);
+  backdrop-filter: blur(6px);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mode-tag { color: #ffbb33; }
+.car-tag { color: #00ddff; }
+.cam-tag { color: #a3ff70; }
+
+.ui-top-btn {
+  background: rgba(22, 28, 44, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.ui-top-btn:active {
+  transform: scale(0.94);
+  background: rgba(45, 55, 85, 0.95);
+}
+
+.ui-top-btn:hover {
+  background: rgba(35, 45, 70, 0.95);
+  border-color: #00ffcc;
+}
+
+/* Parking Sensor PDC HUD */
+.sensor-container {
+  position: absolute;
+  top: 60px;
+  left: 12px;
+  background: rgba(15, 18, 28, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 14px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
+
+.sensor-title {
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: #99a5bd;
+  font-weight: 700;
+}
+
+.sensor-bars {
+  display: flex;
+  gap: 4px;
+  height: 8px;
+  margin: 2px 0;
+}
+
+.s-bar {
+  flex: 1;
+  border-radius: 2px;
+  opacity: 0.2;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.s-green { background: #00ff88; }
+.s-yellow { background: #ffea00; }
+.s-orange { background: #ff9100; }
+.s-red { background: #ff1744; }
+
+.s-bar.active {
+  opacity: 1.0;
+  box-shadow: 0 0 8px currentColor;
+  transform: scaleY(1.3);
+}
+
+.sensor-dist {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Parking Status HUD Center */
+.parking-status-box {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 18, 28, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  padding: 10px 18px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-width: 240px;
+}
+
+.status-level-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #00ffcc;
+}
+
+.status-level-desc {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-bottom: 6px;
+}
+
+.status-meters {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+}
+
+.meter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.meter-item span {
+  font-size: 9px;
+  color: #718096;
+  font-weight: 700;
+}
+
+.meter-item strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.text-strikes {
+  color: #ff4757;
+}
+
+.hold-bar-container {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.hold-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00ffcc, #00e676);
+  transition: width 0.1s linear;
+}
+
+/* Free Roam Stats HUD */
+.free-roam-box {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 18, 28, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 20px;
+  border-radius: 10px;
+  display: flex;
+  gap: 20px;
+}
+
+.roam-stat {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.roam-stat span {
+  font-size: 9px;
+  color: #8892b0;
+  font-weight: 700;
+}
+
+.roam-stat strong {
+  font-size: 13px;
+  color: #00ffcc;
+  font-weight: 800;
+}
+
+/* Speedometer & Dash Cluster (Bottom Center) */
+.dash-cluster {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.speedo-box {
+  background: rgba(12, 16, 26, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 8px 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* PRND Shifter Selector Strip */
+.prnd-shifter-strip {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.gear-btn {
+  background: transparent;
+  border: none;
+  color: #718096;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gear-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.gear-btn.active {
+  color: #0d1117;
+  background: #00ffcc;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+}
+
+.gear-btn.active[data-gear="R"] {
+  background: #ff4757;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.6);
+}
+
+.gear-btn.active[data-gear="P"] {
+  background: #f1c40f;
+  color: #0d1117;
+  box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
+}
+
+.gear-badge {
+  background: #ff4757;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 15px;
+  min-width: 36px;
+  height: 32px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+}
+
+.speed-number-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.speed-val {
+  font-size: 34px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+.speed-unit {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a99ad;
+}
+
+.rpm-bar-wrap {
+  width: 70px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rpm-fill-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00ffcc, #ffbb00, #ff1744);
+  transition: width 0.08s ease-out;
+}
+
+.city-status-badge {
+  background: rgba(15, 18, 28, 0.7);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #9cb0c9;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Touch Controls Layout (Mobile / HP) */
+#touch-controls-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+#touch-controls-container.desktop-hidden {
+  display: none;
+}
+
+#touch-controls-container.visible {
+  display: block;
+}
+
+.touch-cluster {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.left-cluster {
+  bottom: 24px;
+  left: 18px;
+  display: flex;
+  gap: 14px;
+}
+
+.steer-btn {
+  width: 66px;
+  height: 66px;
+  background: rgba(25, 32, 50, 0.78);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.steer-btn svg {
+  width: 34px;
+  height: 34px;
+  fill: #ffffff;
+}
+
+.steer-btn.active {
+  background: rgba(0, 255, 204, 0.4);
+  border-color: #00ffcc;
+  transform: scale(0.92);
+}
+
+.center-cluster {
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(55px); /* Positioned below speedometer */
+}
+
+.handbrake-btn {
+  background: rgba(235, 77, 75, 0.75);
+  backdrop-filter: blur(6px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+.handbrake-btn.active {
+  background: #ff4757;
+  transform: scale(0.92);
+}
+
+.handbrake-btn span {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.handbrake-btn small {
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.right-cluster {
+  bottom: 24px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.nitro-btn {
+  background: rgba(240, 147, 43, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.nitro-btn.active {
+  background: #ff793f;
+  transform: scale(0.92);
+}
+
+.pedals-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.pedal-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
+.brake-pedal {
+  width: 58px;
+  height: 80px;
+  background: rgba(235, 77, 75, 0.78);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.brake-pedal.active {
+  background: #ff4757;
+  transform: scale(0.94);
+}
+
+.gas-pedal {
+  width: 64px;
+  height: 105px;
+  background: rgba(38, 222, 129, 0.78);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.gas-pedal.active {
+  background: #20bf6b;
+  transform: scale(0.94);
+}
+
+.pedal-btn span {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.pedal-btn small {
+  font-size: 9px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+/* Modal Dialogs */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: #151a26;
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.modal-icon {
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.modal-card h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+.modal-stars {
+  font-size: 32px;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+
+.modal-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-cell span {
+  font-size: 10px;
+  color: #8a99ad;
+  display: block;
+}
+
+.stat-cell strong {
+  font-size: 16px;
+  color: #00ffcc;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: #00ffcc;
+  color: #0d1117;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Help Modal Grid */
+.help-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  text-align: left;
+  margin: 14px 0 20px 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.help-section h3 {
+  font-size: 14px;
+  color: #00ffcc;
+  margin-bottom: 6px;
+}
+
+.help-section ul {
+  list-style: none;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .ui-topbar {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+  }
+  .btn-label {
+    display: none; /* Icon only on mobile */
+  }
+  .ui-top-btn {
+    padding: 6px 9px;
+  }
+  .badge-brand {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  .badge-tag {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  .speed-val {
+    font-size: 26px;
+  }
+  .dash-cluster {
+    bottom: 85px; /* Above handbrake/pedals */
+  }
+  .sensor-container {
+    top: 48px;
+    padding: 6px 10px;
+    min-width: 110px;
+  }
+  .parking-status-box {
+    top: 48px;
+    padding: 8px 12px;
+    min-width: 180px;
+  }
+}
+
+/* ========================================================
+   AUDI MMI HEAD UNIT DISPLAY & REAR CAMERA HUD
+   ======================================================== */
+.audi-headunit-overlay,
+.smart-mirror-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+}
+
+.headunit-frame,
+.mirror-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.85), 0 0 0 2px #090d14;
+  border: 2px solid rgba(255, 255, 255, 0.34);
+  background: transparent !important;
+}
+
+/* Audi MMI Infotainment Brushed Header Bar */
+.headunit-header,
+.mirror-top-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(180deg, rgba(8, 12, 20, 0.90) 0%, rgba(8, 12, 20, 0.40) 70%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  z-index: 4;
+}
+
+.headunit-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.headunit-mmi-logo {
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: #ff1744;
+  color: #ffffff;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.headunit-title,
+.mirror-brand {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.headunit-status-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.headunit-gear,
+.mirror-gear {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1.5px 6px;
+  border-radius: 3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.4px;
+}
+
+.gear-r {
+  background: rgba(255, 30, 45, 0.92);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 30, 45, 0.7);
+  animation: pulse-gear 0.8s infinite alternate;
+}
+
+.gear-p {
+  background: rgba(0, 200, 100, 0.85);
+  color: #ffffff;
+}
+
+.gear-d {
+  background: rgba(0, 140, 255, 0.85);
+  color: #ffffff;
+}
+
+@keyframes pulse-gear {
+  from { opacity: 0.82; transform: scale(0.98); }
+  to { opacity: 1.0; transform: scale(1.02); }
+}
+
+/* Dynamic Guideline & PDC Sensor Canvas */
+.headunit-canvas,
+.mirror-guideline-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Audi MMI Touch Bottom Softkey Bar */
+.headunit-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(0deg, rgba(8, 12, 20, 0.92) 0%, rgba(8, 12, 20, 0.45) 75%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  z-index: 4;
+}
+
+.mmi-softkey {
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.mmi-softkey.active {
+  color: #00ffcc;
+  text-shadow: 0 0 6px rgba(0, 255, 204, 0.4);
+}
+
+.sk-icon {
+  font-size: 8px;
+}
+
